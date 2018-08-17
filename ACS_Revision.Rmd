@@ -1,0 +1,396 @@
+---
+output: 
+  bookdown::pdf_document2:
+    toc: false
+    keep_tex: true
+title:      "How different homophily preferences mitigate and spur ethnic and value segregation: Schelling's model extended"
+author: Rocco Paolillo, Jan Lorenz
+bibliography: "references.bib"
+header-includes: 
+- \usepackage{float}
+- \usepackage{multirow}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.lp="fig:")
+
+
+
+library(tidyverse)
+library(grid)
+library(gridExtra)
+
+## I have changed the first raw in the datasets with the commands in the markdown, so the simplified names here are not necessary.
+
+## Load data
+#path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
+ path <- "~/Documents/teaching/RoccoPaolillo/ACS/ACS_revision_09_08/"
+setwd(path)
+if (file.exists("Alldata.Rdata")) {
+	load("Alldata.Rdata") 
+} else {
+	OrigA <- read_csv(paste0(path,"dataset_schelling.csv")) %>%
+		mutate(unhappyp=unhappy/turtles) %>% 
+		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
+	
+	A <- read_csv(paste0(path,"dataset_extension.csv")) %>%
+		mutate(unhappyp=unhappy/turtles) %>% 
+		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
+	
+	All <- bind_rows(list(A=A, OrigA=OrigA),.id = "id")
+	save(All, file = "Alldata.Rdata")
+}
+```
+\abstract{In Schelling's segregation model agents of two ethnic groups live in a regular grid and aim at living in a neighborhood which matches the minimum desired fraction of members of the same ethnicity. The model shows that observed segregation can be the emergent result of people interacting under spatial constraints pursuing such homophily preferences. Even mild homophily preferences can generate high degrees of segregation at the macro level. In modern, ethnically diverse societies people might not define similarity based on ethnicity. Instead, shared tolerance towards ethnic diversity might have a more signficiant role in this regard, with consequences for segregation and integration patterns in societies. Bearing this in mind, we extend Schelling's model by dividing the population of agents in value-oriented and ethnicity-oriented agents. We explore with parameter sweeping what consequences the mutual adaptation of these two types of agents have for ethnic segregation, value segregation and neighborhood density in the model. We do so for equal sizes of ethnic groups as well as for majority/minority conditions. The introduction of value-oriented agents reduces total ethnic segregation compared to the Schelling's original model, but the new phenomenon of value segregation appears to be higher than ethnic segregation. Further on, effects of cross-contagion happen: stronger ethnic homophily preferences lead not only to more ethnic segregation but also to more value segregation. Similarly, a stronger value-orientation of the tolerant agents leads to more ethnic segregation of the ethnicity-oriented agents. It also turns out that value-oriented agents tend to end up living in neighborhoods with more agents than ethnicity-oriented agents. In majority/minority settings, such effects appear more drastic for the minority ethnicity.}
+
+
+# Introduction 
+
+
+
+
+Residential segregation can be defined as the spatial and unequal distribution of different groups in a city [@clark2015]. It is a critical topic for policymakers and social research because it reduces the probability of interaction between diverse groups [@massey88]. As regards social integration, such lack of probability of interaction is considered a major obstacle to the participation of minorities in the mainstream society, e.g. for immigrants [@Esser2010]. Therefore, the "acceptance of diversity" is seen as an essential ingredient of social cohesion [@DragolovIgnaczea2016SocialCohesionin]. Although there is not unanimous agreement that residential proximity would be associated with successful integration, researchers are mainly interested in the reasons of observed segregation [@bolt2010]. Two main explanations in the social sciences are that physical distance between diverse groups is a reflection of their social distance, or the result of local residents' active strategies opposing ethnic minorities [@clark2008; @bruch2014]. On the contrary, the theoretical observation of Thomas Schelling [@schelling69] is that segregation might  be the emergent result of mutual adaptation of people who seek to live close to members of the own group in spatial constraints, without implying negative attitudes against other groups. Although the term was not used by Schelling, we can define these individual choices of people as homophily preferences. Homophily is the tendency to associate to those considered as similar [@mcpherson2001]. Even thoguh it is mainly used in the field of network science, it can be applied to aggregation in neighborhoods. As a matter of fact, some studies on segregation dynamics based on Schelling's work expressely use the term homophily as drive to residential moves and neighborhood preferences [@muller2018;@magi2016]. Schelling's model is built on the definition of similarity as a "twofold, exhaustive and recognizable distinction" [@schelling69 p.488], which he applied to the racial segregation between black and white ethnic groups in U.S. census. The population in the model is divided in two groups whose members locate in a neighborhood as long as its composition matches the desired fraction of people considered as similar [@schelling69;@schelling71]. The main contribution of Schelling's work is to show how segregation at the societal level can emerge as a stable outcome from the "interplay of individual choices" [@schelling69, p.488] even from low desired fractions [@schelling69;@schelling71]. Nowadays, Schelling's model is a recognized as a seminal agent-based model [@hatna2015] and one of the first contributions in the computational social sciences and complex systems dynamics [@epstein1996]. In the field of residential segregation, it is often cited as a prototype of checkerboard models [@zhang2011] and tipping behavior in residential dynamics [@card2008].
+
+
+
+
+
+In this paper we focus on the individual conceptualization of similarity in Schelling's model. The definition of similarity based  on a "twofold, exhaustive and recognizable distinction" [@schelling69 p.488] has  been associated with a binary definition of ethnic segregation [@clark2015;@zhang2011]. Nevertheless, as already Schelling pointed out, similarity needs not be based on ethnicity [@schelling69;@schelling71]. In modern societies people might be part of diverse social groups [@roccas2002], and in multicultural context this might include not only different ethnic background, but also different cultural values [@schwartz2012] or attitudes towards integration [@bourhis1997]. In these societies people might differ in their way to construct similarity out of the different categories they are part of. According to the ethnic boundary making perspective, in multicultural contexts the distinction between different groups derives from the reciprocal construction of symbolic boundaries between "us" and "them" [@bail2008]. The process emerges from the constructivist, subjective and interactive definitions of similarity and inclusion people engage in, independently of their ethnic membership [@wimmer2007; @wimmer13]. That means, homophily preferences assoociated with these dynamics can be conceptualized in different ways, and this can have interesting implications for segregation scenarios. Lazarsfeld and Merton [@lazarsfeld1954] as reviewed by @mcpherson2001, distinguished between two determinants of homophily behavior. Status homophily is based on characteristics stratifying society, e.g. ethnicity, whereas value homophily on internal status such as attitudes and opinions [@mcpherson2001]. We focus here on homophily created through shared values of tolerance for two reasons. On the one hand, it has a direct effect on acceptance of an ethnically diverse neighborhood [@marjoka2014] and favor contacts between groups [@brewer2005]. On the other hand, tolerance can cause conflicts with members of the own group who do not share similar attitudes, so to threaten the group's unity [@verkuyten2010]. When tolerant agents subscribe to @popper45, they should not tolerate intolerance, which is called the "Paradox of Tolerance". Similar to the agents in Schelling's original model they would prefer to live in a neighborhood with at least some others who share their tolerance values. 
+
+
+
+
+Additionally, we are interested in the role of relative group sizes, which received less attention in Schelling's demonstrations [@schelling71]. Indeed, most of the following studies typically assume equal sizes of ethnic groups [@troitzsch2017]. However, relative group sizes is an important topic in applied segregation studies. Historically, segregation indexes are based on the uneven distribution of groups in space [@massey88]. As two sides of the same coin, dissimilarity indexes  so computed  measure  the probability to meet members of other groups (e.g. Duncan) or being isolated within the own ethnic group (e.g. Lieberson) [@massey88]. The literature suggests that the smaller the group, the greater is the chance of interacting with and assimilating to the local  population [@Esser2010]. Nevertheless, isolation can favor segregation over assimilation by reducing the chances of interaction [@massey88]. To the best of our knowledge, there is only one study [@troitzsch2017] simulating minority and majority group sizes and measuring the impact of desired fraction for both groups on emerged segregation. Investigating the consequences of group sizes combined with value similarity in a Schelling's type model might therefore be of additional interest.
+
+In  sum, we are interested in what consequences different homophily preferences based on cross-categories of ethnicity and shared values of ethnic tolerance can have on the emergent segregation in Schelling's model. To this aim, we extend  the model by dividing the population of both ethnic groups in value-oriented and ethnicity-oriented agents. We explore with parameter sweeping what ethnic segregation, value segregation and density neighborhood outcomes emerge from different homophily thresholds of such agents in equal group sizes and majority/minority conditions.
+
+
+
+# Model and Simulation Experiments
+
+Agents represent individuals relocating. Each agent is defined by two overlapping static state variables: her *ethnicity*, as in the Schelling's original model, and her *value orientation*, which constitutes our extension of the model. Ethnicity is modeled through a color tag: each agent is attributed either to ethnicity 1 (red), or ethnicity 2 (green). Value attribution is modeled through a shape tag, dividing agents into ethnicity-oriented agents (shape square) and value-oriented agents (shape circle). According to their value attribution, agents use different criteria to define their homophily preferences. Value-oriented agents are tolerant, meaning they consider as similar those agents who share the same tolerance values but ignore their ethnicity. Ethnicity-oriented agents are intolerant, meaning they consider as similar agents who share their ethnicity but ignore if they have tolerance values or not. Homophily preferences do not change during the simulation.
+
+We implemented our model extending NetLogo's version of Schelling's model [@Wilenskysm], version NetLogo 6.0.3 [@Wilenskynl], keeping the standard periodic boundary conditions of the model (torus world) within a 51 times 51 patches regular grid. Thus, there are 2601 patches where agents can live and each patch has eight neighboring patches (Moore neighborhood). On each patch there is space for one agent to live. 
+
+The initial configuration is set up based on two parameters: the expected *density* and the *fraction of the majority ethnicity*. Both ethnic groups are split between half value-oriented agents and half ethnicity-oriented agents. 
+The initialization goes as follows. For each patch, an agent is positioned there with a probability determined by the expected density. The ethnicity (color) of the agent is set to red with probability determined by the fraction of the majority ethnicity. A final random draw decides with probability 0.5 about the value orientation (shape)  which is set to either square or circle. For agent $i$, we call her ethnicity $E(i)$ and her value orientation $V(i)$. 
+
+Global parameters for a simulation run are the *ethnic homophily threshold* and the *value homophily threshold* $\theta^\text{E}, \theta^\text{V} \in [0,1]$. The ethnic homophily threshold determines for the ethnicity-oriented agents the minimal fraction of agents with the same ethnicity they want in their neighborhoods. Analog, the value homophily threshold determines for the value-oriented agents the minimal fraction of other value-oriented agents they want in their neighborhoods. We define $\Theta^\text{E}_i = \frac{\#\{j \in N(i) | E(j)=E(i)\}}{\#N(i)}$ as the *ethnic segregation in the neighborhood* of agent $i$ and $\Theta^\text{V}_i = \frac{\#\{j \in N(i) | V(j)=V(i)\}}{\#N(i)}$ as her *value segregation in the neighborhood*, where $\#N(i)$ stands for the number of agents $j$ in her current Moore neighborhood. An ethnicity-oriented agent $i$ is *happy* when $\Theta^\text{E}_i \geq \theta^\text{E}$. A value-oriented agent is *happy* when $\Theta^\text{V}_i \geq \theta^\text{V}$. Agents are also happy when their neighborhood is empty. Fig. \ref{fig:AnalysisMapExamples}A shows the different types of agents in our model, demonstrating which other types of agents in the neighborhood contribute to their happiness.
+
+The dynamic flow of the model is as follows. 
+At each time step after initialization, all unhappy agents relocate in a random order, each to a free spot at random. There is no targeted relocation. We kept the recursive relocation mechanism of the NetLogo implementation. Then, the happiness state of all agents is updated based an recalculation of $\Theta^\text{E}_i$ and $\Theta^\text{V}_i$.  
+
+On the societal level we measure the *ethnic* and *value segregation*, $\Theta^\text{E}$ and $\Theta^\text{V}$, as the average ethnic and value similarities in the neighborhoods of all agents. For a deeper analysis we also measure the ethnic and value segregation of the subgroups of the ethnicity-oriented and the value-oriented agents, as well as these two groups further divided into the two ethnic groups. Naturally, the averages are only computed over agents whose neighborhood is not empty. Additionally, we measure the neighborhood density of agent $i$ as $d_i = \frac{\#N(i)}{8}$ and the average *neighborhood density* of the society $d$. Also the neighborhood density can be computed for different subgroups of agents.
+Finally, we also measure the fraction of happy agents. 
+
+Tab. \ref{tab:parameters} lists all static and dynamic agent variables, and parameters of the model, as well as the output measures used in the following section. We provide the NetLogo model for reference [@PaolilloLorenz2018ValueSegregation].  
+
+\begin{table}
+\centering 
+
+\begin{tabular}{lll}
+ Static agent variable                      & Range                               \\ \midrule\midrule
+ Ethnicity $E(i)$  (\texttt{color})         & Ethnicity 1 (\texttt{red}), Ethnicity 2 (\texttt{green})         \\
+ Value orientation $V(i)$  (\texttt{shape}) & ethnicity-oriented  (\texttt{square}), value-oriented  (\texttt{circle}) \\
+ \bottomrule
+\end{tabular}
+
+\bigskip
+
+\begin{tabular}{lll}
+ Parameters for setup of initial conditions    & Range   & Parameter sweep  \\ \midrule\midrule
+ Population density (\texttt{density})                       & 0.5--0.99   & 0.7          \\
+ Fraction of majority ethnicity (\texttt{fraction\_majority}) & 0.5--1      & $0.5,\stackrel{+0.1}{\dots}, 0.9$  \\
+ \bottomrule
+\end{tabular}
+
+\bigskip
+
+\begin{tabular}{lll}
+ Global parameters for simulation run    & Range   & Parameter sweep  \\ \midrule\midrule
+ Ethnic homophily threshold $\theta^\text{E}$ (\texttt{ethnic\_homophily}) & [0,1]   & $0,\stackrel{+0.1}{\dots}, 1$ \\
+ Value homophily threshold $\theta^\text{V}$ (\texttt{value\_homophily}) & [0,1]   & $0,\stackrel{+0.1}{\dots}, 1$  \\
+ \bottomrule
+\end{tabular}
+\bigskip
+
+\begin{tabular}{lll}
+ Dynamic variables for agents                 & Computation & Range                \\ \midrule\midrule
+ Ethnic similarity in neighborhood $\Theta^\text{E}_i$ & $\#\{j \in N(i) | E(j)=E(i)\} / \#N(i)$ & [0,1]  \\ 
+ Value similarity in neighborhood $\Theta^\text{V}_i$ & $\#\{j \in N(i) | V(j)=V(i)\} / \#N(i)$ & [0,1]  \\ 
+ \multirow{2}{*}{Happiness of $i$ (\texttt{happy?})} & $\Theta^\text{E}_i \geq \theta^\text{E}$ if $V(i)$ = ethnicity-oriented, & \multirow{2}{*}{TRUE, FALSE} \\
+  & $\Theta^\text{V}_i \geq \theta^\text{V}$ if $V(i)$ = value-oriented &   \\
+ Neighborhood density $d_i$           & $d_i = \frac{\#N(i)}{8}$ & [0,1]  \\
+ \bottomrule
+\end{tabular}
+
+\bigskip
+
+\begin{tabular}{lll}
+ Global output measures    & Computation   \\ \midrule\midrule
+ Fraction of happy agents & \# happy agents / \# agents \\
+ Ethnic segregation $\Theta^\text{E}$       & mean ethnic segregation      \\ 
+  ... of all agents          & (Figs. \ref{fig:OverallSegregation}, \ref{fig:AnalysisMapExamples},  and \ref{fig:Heatmap})  \\
+  ... of ethnicity-oriented agents  & \multirow{2}{*}{(Figs. \ref{fig:AnalysisMapExamples},  and Fig. \ref{fig:Segregation})}  \\
+  ... of value-oriented agents      &                                         \\
+  ... of ethnicity-oriented agents from majority ethnicity  &  \multirow{4}{*}{(Fig. \ref{fig:SegregationMinority})} \\
+  ... of ethnicity-oriented agents from minority ethnicity  &                       \\
+  ... of value-oriented agents from majority ethnicity  &                       \\
+  ... of value-oriented agents from minority ethnicity  &                       \\
+  Value segregation $\Theta^\text{V}$        & mean value segregation    \\ 
+  ... subgroups as above & (Figs. as above)\\
+ Neighborhood density $d$                   & mean neighborhood      \\  
+  ... subgroups as above as above & (only Figs. \ref{fig:AnalysisMapExamples}, \ref{fig:Segregation},  and \ref{fig:SegregationMinority})\\
+ \bottomrule
+\end{tabular}
+\caption{Tables of static agent variables, parameters, parameter sweep values for simulation experiments, and output measures. Typewriter font is a reference to names used in NetLogo code [@PaolilloLorenz2018ValueSegregation]. } \label{tab:parameters}
+\end{table}
+
+
+We performed parameter sweep to explore the consequences of our extension on aggregated results of the happiness of agents, their ethnic segregation $\Theta^\text{E}$, their value segregation $\Theta^\text{V}$ and their neighborhood density $d$. Parameter sweep is run in NetLogo's BehaviorSpace. Two datasets were collected to compare our extension with the original Schelling's model. The first dataset is from Schelling's original model, manipulating also the relative group size but without value-oriented agents. The second main dataset is from our extension including both value-oriented agents and varying size of the majority ethnic group. We provide both datasets for reference [@PaolilloLorenz2018ValueSegregation]. The results can also be reproduced by re-running the BehaviorSpace computation as set up in the NetLogo file. 
+
+We initialized each simulation with an expected agents density of 0.7. The fraction of the majority ethnicity was swept over 50\%, 60\%, 70\%, 80\% and 90\%. The core parameter sweep was over the two different homophily thresholds $\theta^\text{E}$ and $\theta^\text{V}$. Both thresholds were scanned from 0 to 1 in steps of 0.1. The values of the parameter sweep are shown in Tab. \ref{tab:parameters}. For each point in the parameter sweep space we ran 10 simulation runs. All output measures are averages over these ten runs. Each simulation was run either until all agents were happy, or until 1000 time steps had passed. Output measures were saved only for the last time step of each simulation run. 
+
+
+# Results 
+
+For comparison, we report in fig. \ref{fig:OverallSegregation} the emergent segregation in Schelling's original model in which all agents are ethnicity-oriented. With an ethnic homophily threshold of $\theta^\text{E}=0.3$ an ethnic segregation of $\Theta^\text{E} =`r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, id == "OrigA") %>% pull(simcolor) %>% round(digits=3)`$ emerges. The baseline ethnic segregation of the initial configuration is 0.5. Thus, all agents would be happy when the initial segregation would be realized in their neighborhood. This is not the case just because of random fluctuations in the initial condition. The dynamics of repeated relocation of unhappy agents triggers the evolution of an equilibrium configuration where all agents are happy. Somehow surprisingly, the ethnic segregation of `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, id == "OrigA") %>% pull(simcolor) %>% round(digits=3)` in this configuration is larger than the initial baseline segregation of 0.5 and way beyond the homophily threshold of 0.3. 
+
+Fig. \ref{fig:OverallSegregation} compares the emergent ethnic segregation in Schelling's original model with our extension where half of the agents in each ethnic group are value-oriented. In this analysis, the value-oriented agents have the same homophily threshold as the ethnicity-oriented agents, $\theta^\text{E} = \theta^\text{V}$. Further on, we also show in panels how segregation changes when one ethnic group is in a majority condition with increasing size up to 90\%. The thick lines show ethnic segregation ($\Theta^\text{E}$ in magenta) and value segregation ($\Theta^\text{V}$ in blue). Focusing on equal size ethnic groups and low homophily thresholds of $\theta^\text{E} = \theta^\text{V} = 0.3$, we observe that the emergent ethnic and value segregation for all agents in the population are almost equal and lower than in Schelling's original model $\Theta^\text{E} = `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simcolor) %>% round(digits=2)` \approx `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simshape) %>% round(digits=2)` = \Theta^\text{V}$. For the interpretation of the degree of ethnic and value segregation in our model it is important to note that only half of all the agents consider the  ethnic or value segregation of their local neighborhood as important for their happiness. That means, the computed value segregation for all agents is an average over agents of which one half is ethnicity-oriented and does not care about values; vice-versa for ethnic segregation. Nevertheless, even if we look specifically at the ethnic segregation of ethnicity-oriented agents only ($\Theta^\text{E} = `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simcolorS) %>% round(digits=2)`$) or the value segregation of value-oriented agents only ($\Theta^\text{E} = `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simshapeC) %>% round(digits=2)`$), we find that both are lower than in Schelling's original model (numbers are not shown in Fig. \ref{fig:OverallSegregation} but in Fig. \ref{fig:AnalysisMapExamples}C). 
+
+Higher homophily thresholds in Fig. \ref{fig:OverallSegregation} show an increase of segregation, in particular for value segregation. The sudden drop of segregation for homophily thresholds beyond $\theta^\text{E} = \theta^\text{V} = 0.7$ comes together with a drop of the fraction of happy agents from 100\% to almost zero. The reason is that for such strong homophily preferences the system is not able to find an equilibrium through random moves of unhappy agents. It is important to keep the existence of this order-disorder transition in mind for the interpretation of the following results. 
+
+Fig. \ref{fig:OverallSegregation} also shows that changes of the size of the majority ethnic group leaves value segregation almost unchanged and changes ethnic segregation in a simple way: in a society where the majority ethnicity is a fraction of $x$ the baseline ethnic segregation in random initial conditions is $x\cdot x + (1-x)\cdot (1-x)$ .(Example: 80\% of agents have ethnic segregation of 0.8 and 20\% have 0.2.) Thus, baseline ethnic segregation under 60\%, 70\%, 80\%, and 90\% majorities is 0.52, 0.58, 0.68, and 0.82. The segregation above baseline changes proportionally to the distance between the baseline segregation and 1. 
+
+```{r OverallSegregation, fig.pos='h', fig.cap="Ethnic and value segregation ($\\Theta^\\text{E}, \\Theta^\\text{V}$) for equal ethnic and value homophily thresholds $\\theta^\\text{E} = \\theta^\\text{V}$ in comparison to ethnic segregation in Schelling's original model. Results for societies with different sizes of the two ethnic groups. Dotted lines show the baseline segregation in random initial conditions. "}
+All %>%  filter(density == 70, id %in% c("A","OrigA"), value_homophily == ethnic_homophily | id == "OrigA") %>%
+	mutate(happy = 1 - unhappyp) %>%
+	gather(key = subgroup, value = Similar, simcolor, simshape, happy) %>%
+	filter(id == "A" | (id == "OrigA" & subgroup == "simcolor")) %>%
+	mutate(subgroup = if_else(id == "A", subgroup, id)) %>%
+	mutate(subgroup = factor(subgroup, levels=c("simcolor", "simshape", "happy", "OrigA"))) %>%
+	ggplot(aes(x = ethnic_homophily/100, y = Similar, color = subgroup, size = (id=="OrigA" | subgroup == "happy"), linetype = id)) + geom_line() +
+	geom_hline(aes(yintercept = baseline),
+		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.52,0.58,0.68,0.82)),linetype="dotted",color="magenta") +
+	geom_hline(aes(yintercept = baseline),
+		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.5,0.5,0.5,0.5)), linetype="dotted",color="blue") +
+	facet_grid(. ~ factor(fraction_majority, labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority"))) + coord_fixed() +
+	labs(x = "Ethnic and value homophily threshold",y = "") +
+	scale_color_manual(name="",labels=c("Ethnic Segregation","Value Segregation","Fraction happy","Segregation Original Schelling"), values=c("magenta","blue", "black","magenta")) +
+	scale_size_manual(values=c(1,0.3)) +
+	scale_linetype_manual(values=c("solid","dashed")) +
+	scale_x_continuous(breaks=c(0,0.3,0.6,1))+
+	scale_y_continuous(breaks=c(0,0.5,1))+
+	guides(legend.title="", colour = guide_legend(override.aes = list(linetype = c("solid","solid","solid","dashed"), size = c(1,1,0.3,0.3))), size="none", linetype="none") +
+	theme_bw() + theme(legend.position = "bottom", legend.margin=margin(0,0,0,0), legend.box.margin=margin(-10,-10,-10,-10),
+		panel.grid.minor.x = element_blank())
+```
+
+Fig. \ref{fig:AnalysisMapExamples}B shows how emergent equilibrium configurations look like. Examples 1 and 4 show examples with equal ethnic and value homophily thresholds as in Fig. \ref{fig:OverallSegregation}. For low homophily thresholds $(\theta^\text{E}, \theta^\text{V}) = (0.3,0.3)$ some clustering is visible but still we see areas in which all four types of agents are mixed. For high homophily thresholds $(\theta^\text{E}, \theta^\text{V}) = (0.6,0.6)$ areas of almost exclusively value-oriented agents are clearly visible as well as areas of ethnicity-oriented agents in both ethnicities. Fig. \ref{fig:AnalysisMapExamples} also extends the analysis to societies with low value-oriented and higher ethnic-orientation and the other way round. 
+
+In particular, we focus on effects of cross-contagion of strengthening the homophily preferences on increases of segregation. To that end, let us consider a society with low ethnic and low value homophily preferences as in Examples 1 and 2 from Fig. \ref{fig:AnalysisMapExamples} (check Sections B and C). When the ethnicity-oriented agents change to high homophily threshold $\theta^\text{E} = 0.6$ as in Example 2 we observe that not only ethnic segregation increases as in Schelling's original model, but also value segregation $\Theta^\text{V}$ increases from `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simshape) %>% round(digits=2)` to `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==60, value_homophily==30, id == "A") %>% pull(simshape) %>% round(digits=2)`. 
+The other way round in Example 3: When the value-oriented agents increase their homophily threshold to $\theta^\text{V} = 0.6$ they do not only increase value segregation but also ethnic segregation from `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simcolor) %>% round(digits=2)` to `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==60, id == "A") %>% pull(simcolor) %>% round(digits=2)`. In this case, the increase is entirely due to a strong increase in ethnic segregation in the group of the ethnicity-oriented agents. Thus, by increasing their value homophily preferences the value-oriented agents have not changed their ethnic segregation, but increased the ethnic segregation of the ethnicity-oriented agents they do not share values with. The increase is substantial from `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==30, id == "A") %>% pull(simcolorS) %>% round(digits=2)` to `r All %>% filter(density == 70, fraction_majority == 50, ethnic_homophily==30, value_homophily==60, id == "A") %>% pull(simcolorS) %>% round(digits=2)`. This is the main new emergent effect in our extended Schelling model.
+
+
+```{r AnalysisMapExamples, out.extra='page=1', fig.pos='H', out.width = '100%', fig.align="center", fig.cap="(A) Types of agents and whom they consider similar. (B) The $(\\theta^\\text{E}, \\theta^\\text{V})$-space of different combinations of ethnic and value homophily thresholds. The gray diagonal refer to parameters in Fig. 1. The black lines refer to parameters analyzed in Figs. 3 and 5. Further on, four examples of simulation outcomes for $(\\theta^\\text{E}, \\theta^\\text{V}) = (0.3,0.3), (0.3,0.6), (0.6,0.3), (0.6,0.6)$. (C) Numeric values for ethnic segregation, value segregation, and neighborhood density for the four examples in equal group size conditions. Numbers are computed once for the total population and separately for the half-groups of the ethnicity-oriented and the value-oriented agents. The numbers come from the simulation analysis where each number is the average over ten runs. A separation with respect to ethnicity is not of interest, since the condition presented is for equal group size, and numbers would be essentially the same for both ethnicities. "}
+knitr::include_graphics(paste0(path,"Images/ACSFigs.pdf"))
+summarytable <- function(All, thetaE, thetaV, maj) {
+	a <- All %>% group_by() %>% 
+		filter(id == "A", fraction_majority == maj, density == 70, ethnic_homophily == thetaE, value_homophily == thetaV) %>% 
+		select(numnei,numneiRS,numneiGS,numneiRC,numneiGC,simcolor,simcolorRS,simcolorGS,simcolorRC,simcolorGC,simshape,simshapeRS,simshapeGS,simshapeRC,simshapeGC) %>% matrix(ncol=5, byrow=T) %>% as.data.frame(row.names = c("Neighborhood density", "Ethnic segregation", "Value segregation"))
+	names(a) <- c("Total", "RS", "GS", "RC", "GC")
+	a
+}
+simplesummarytable <- function(All, thetaE, thetaV, maj) {
+	a <- All %>% group_by() %>% 
+		filter(id == "A", fraction_majority == maj, density == 70, ethnic_homophily == thetaE, value_homophily == thetaV) %>% 
+		select(numnei,numneiS,numneiC,simcolor,simcolorS,simcolorC,simshape,simshapeS,simshapeC) %>%
+		mutate_all(round, digits=2) %>% 
+		matrix(ncol=3, byrow=T) %>%
+		as.data.frame(row.names = c("Neighborhood density", "Ethnic segregation", "Value segregation"))
+	names(a) <- c("Total", "Ethnicity oriented", "Value oriented")
+	a[c(2,3,1),]
+}
+# simplesummarytable(All, 30, 30, 50)
+# simplesummarytable(All, 30, 60, 50)
+# simplesummarytable(All, 60, 30, 50)
+# simplesummarytable(All, 60, 60, 50)
+# simplesummarytable(All, 70, 70, 50)
+
+# x <- unique(c(matrix(rep(1:8,each=8),nrow=8) / matrix(rep(1:8,each=8),nrow=8, byrow = TRUE)))
+# sort(x[x<=1])
+# <0.1: 0
+# <0.2: 1/8 1/7 1/6
+# <0.3: 2/8 1/4 1/5 2/7
+# <0.4: 1/3 2/6 3/8
+# <0.5: 2/5 3/7
+# <0.6: 1/2 2/4 4/8 4/7
+# <0.7: 3/5 5/8 2/3 4/6
+# <0.8: 5/7 3/4 6/8 
+# <0.9: 4/5 5/6 6/7 7/8
+# 
+# plot(dbinom(0:8, prob = 0.7, size = 8))
+# 
+
+```
+
+Fig. \ref{fig:Segregation} shows how ethnic and value segregation changes with respect to one homophily threshold while the other is hold constant at a low homophily threshold as shown by the black lines in Fig. \ref{fig:AnalysisMapExamples}B. The blue lines in Fig. \ref{fig:Segregation} emphasize the cross-contagion effect. Further on, the figure shows that ethnic segregation stays relatively close to the baseline level of 0.5 for the group of the value-oriented agents in all simulations. Instead, ethnic segregation reaches very high levels for the group of the ethnicity-oriented agents. In contrast, value segregation of the ethnicity-oriented agents is only slightly below the value segregation of the value-oriented agents in all simulations. 
+
+Another aspect of interest is how homophily preferences affect the density of agents in their neighborhoods. In all our simulations, the baseline density in initial conditions is 0.7, meaning that on average 70% of the eight neighboring patches are occupied by others. The panels at the bottom of Fig. \ref{fig:Segregation} show that the total neighborhood density is only slightly above baseline. Value-oriented agents usually live with substantially more agents in their neighborhood than ethnicity-oriented agents. For a low value homophily threshold ($\theta^\text{V}=0.3)$, this holds for almost all ethnic homophily thresholds (see panel on the left-hand side), except for $\theta^\text{E}=0.7$, which is the highest ethnic homophily threshold for which an equilibrium of all happy agents can be reached (cf. Fig. \ref{fig:Heatmap}). For a low ethnic homophily threshold ($\theta^\text{E}=0.3)$ the difference between the neighborhood densities of the value-oriented and the ethnicity-oriented agents is at largest for intermediate value homophily thresholds (see panel on the right-hand side of fig. \ref{fig:Segregation}). 
+
+```{r Segregation,  fig.pos='H', out.width = '100%', fig.align="center", fig.cap="Ethnic segregation, value segregation, and neighborhood density ($\\Theta^\\text{E}$, $\\Theta^\\text{V}$ and $d$) as a function of the ethnic and value homophily thresholds ($\\theta^\\text{E}$ and $\\theta^\\text{V}$) with $\\theta^\\text{V}=0.3$ and $\\theta^\\text{E}=0.3$ respectively (cf.~Fig.~\\ref{fig:AnalysisMapExamples}) in equal sizes condition. Computation of segregation and density separated for ethnicity-oriented and value-oriented agents. In all underlying simulations both ethnicities have equal sizes. The thick black lines show effects of cross-contagion: The emergent ethnic segregation through higher value homophily thresholds and the emergent value segregation through higher ethnic homophily thresholds."}
+suppressWarnings(
+suppressMessages(
+	All %>% filter(density == 70, id == "A", fraction_majority == 50, value_homophily == 30) %>%
+		gather(key = subgroup, value = fraction, simcolorS, simcolorC, simshapeS, simshapeC, numneiS, numneiC, 
+			simcolor, simshape, numnei) %>%
+		mutate(`Homophily wanted` = fct_collapse(subgroup, all = c("simcolor", "simshape", "numnei"), 
+			`ethnicity-oriented` = c("simcolorS", "simshapeS", "numneiS"), `value-oriented`=c("simcolorC", "simshapeC","numneiC")),
+			Segregation = fct_relevel(fct_collapse(subgroup, `Ethnic Segreg.` = c("simcolor", "simcolorC", "simcolorS"), 
+				`Value Segreg.` = c("simshape", "simshapeC", "simshapeS"),
+				`Neighbor. density` = c("numnei", "numneiC", "numneiS")),
+				"Ethnic Segreg.", "Value Segreg."),
+			threshold_type = "Ethnic homophily\n(Value homophily th. = 0.3)",
+			`Homophily threshold` = ethnic_homophily/100) %>% rbind(
+				All %>% filter(density == 70, id == "A", fraction_majority == 50, ethnic_homophily == 30) %>%
+					gather(key = subgroup, value = fraction, simcolorS, simcolorC, simshapeS, simshapeC, numneiS, numneiC, 
+						simcolor, simshape, numnei) %>%
+					mutate(`Homophily wanted` = fct_collapse(subgroup, all = c("simcolor", "simshape", "numnei"), 
+						`ethnicity-oriented` = c("simcolorS", "simshapeS", "numneiS"), 
+						`value-oriented`=c("simcolorC", "simshapeC","numneiC")),
+						Segregation = fct_relevel(fct_collapse(subgroup, `Ethnic Segreg.` = c("simcolor", "simcolorC", "simcolorS"), 
+							`Value Segreg.` = c("simshape", "simshapeC", "simshapeS"),
+							`Neighbor. density` = c("numnei", "numneiC", "numneiS")),
+							"Ethnic Segreg.", "Value Segreg."),
+						threshold_type = "Value homophily\n(Ethnic homophily th. = 0.3)",
+						`Homophily threshold` = value_homophily/100)
+			) %>% 
+		ggplot(aes(x = `Homophily threshold` , y = fraction, shape = `Homophily wanted`, color = `Homophily wanted`)) + 
+		geom_line() + geom_point(color = "black") +
+		geom_line(data = data_frame(`Homophily threshold` = c(c(0.3,0.6,0.6),c(0.3,0.6,0.6)),
+			fraction = c(c(0.616,0.616,0.67),c(0.61,0.61,0.69)),
+			Segregation = factor(c(1,1,1,2,2,2), levels=c(1,2,3),
+				labels=c("Ethnic Segreg.","Value Segreg.", "Neighbor. density")),
+			`Homophily wanted` = factor(c(1,1,1,1,1,1), levels=c(1,2,3), labels=c("all","ethnicity-oriented","value-oriented")),
+			threshold_type = factor(c(1,1,1,2,2,2), levels=c(1,2),
+				labels=c("Value homophily\n(Ethnic homophily th. = 0.3)",
+					"Ethnic homophily\n(Value homophily th. = 0.3)"))
+			), color = "black", size=1) +
+		facet_grid(Segregation ~ threshold_type) + coord_fixed() + ylab("") +
+		scale_shape_manual(values=c(46,19,15,1), guide = FALSE) +
+		scale_color_manual(values=c("gray","blue", "magenta"), guide = guide_legend(override.aes = list(shape = c(46,19,15),
+			linestyle=c("solid","solid","solid"),
+			color = c("gray","blue","magenta")), title ="" )) +
+		scale_x_continuous(limits = c(0,1), breaks=c(0,0.3,0.6,1)) +
+		scale_y_continuous(limits = c(0.49,1), breaks=c(0.5,0.7,1)) +
+		theme_bw() + theme(legend.position = "bottom",	panel.grid.minor.x = element_blank(), 
+			panel.grid.minor.y = element_blank(), legend.margin=margin(0,0,0,0), 
+			legend.box.margin=margin(-4,-4,-4,-4))
+))
+```
+
+
+Fig. \ref{fig:Heatmap} shows the fraction of finally happy agents, and ethnic and value segregation for the whole society as a heatmap in the $(\theta^\text{E},\theta^\text{V})$-plane (cf. Fig. \ref{fig:AnalysisMapExamples}B). Results for different sizes of the majority ethnicity are shown in different panels. The panels about the fraction of happy agents show some interesting insights about the border of the order-disorder transition. Dark red areas mark the ordered region, where the society reaches a configuration with all agents happy. Interestingly, this is possible for all value homophily thresholds when the ethnic homophily preference of the ethnicity-oriented agents is relatively high at $\theta^\text{E}=0.6$. Under these conditions, happiness for all agents can be reached even when value-oriented agents do not tolerate any ethnicity-oriented agent in their neighborhood ($\theta^\text{V}=1$). Surprisingly, this is not possible when these ethnicity-oriented agents have only low ethnic homophily preferences of e.g. $\theta^\text{E}=0.3$. In this case, some value-oriented agents remain unhappy and not find a place to be happy, nor they temporarily build a configuration which makes other agents move which could create some space for them to form or join a cluster of happy value-oriented agents.
+The other way round, there is no value homophily threshold for which it is possible to reach happiness for all for the highest ethnic homophily threshold. 
+
+With respect to the size of the majority ethnicity, results are relatively similar with one notable further insight. For larger majorities the fraction of happy agents does not drop to zero in the disordered region ($\theta^\text{E}\geq 0.8, \theta^\text{V}\geq 0.8$). In a society with a 90\% majority half of the agents is happy. These are mostly the ethnicity-oriented agents from the majority ethnicity (45% of the population). They are easily happy just because of the low fraction of agents from the other ethnicity. 
+
+```{r Heatmap, fig.pos='h', fig.cap="Heatmap of the fraction of happy agents, ethnic segregation $\\Theta^\\text{E}$, and value segregation $\\Theta^\\text{V}$ with respect to the space of the ethnic and value similarity thresholds $(\\theta^\\text{E}, \\theta^\\text{V})$ (cf. Fig. \\ref{fig:AnalysisMapExamples}). Panels columns show simulation results for different sizes of the two ethnic groups. "}
+All %>% filter(density == 70, id == "A") %>%  mutate(happy = 1 - unhappyp) %>% 
+	group_by() %>% 
+	gather(key = measure, value = Fraction, simcolor, simshape, happy) %>% 
+	mutate(measure = factor(measure, levels=c("happy", "simcolor", "simshape"), 
+		labels=c("Fraction happy", "Ethnic segreg.", "Value segreg.")),
+		fraction_majority = factor(fraction_majority, 
+		labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority")),
+		`Ethnic homohily threshold` = ethnic_homophily/100, 
+		`Value homohily threshold` = value_homophily/100) %>% 
+	ggplot(aes(x = `Ethnic homohily threshold`, y = `Value homohily threshold`, fill = Fraction)) + 
+	geom_tile() + 
+	annotate("point", x=c(0.3,0.3,0.6,0.6), y=c(0.3,0.6,0.3,0.6), shape=8) +
+	facet_grid(measure ~ fraction_majority) + 
+	coord_fixed() +
+	scale_fill_distiller(palette = "RdBu", limits=c(0,1), breaks=seq(0,1,0.5),
+		guide=guide_colorbar(barwidth = 10, barheight = 0.5, label.position = "top")) + 
+	scale_x_continuous(limits = c(-0.05,1.05), breaks=c(0,0.3,0.6)) + 
+	scale_y_continuous(limits = c(-0.05,1.05), breaks=seq(0,1,0.5)) +
+	theme_bw() + theme(legend.position = "bottom", panel.grid.minor.x = element_blank(), legend.title=element_blank())
+```
+
+For societies with ethnic groups of unequal size, it makes sense to also look at differences in emergent ethnic or value segregation separately for the different ethnic groups. This was not of interest in Fig. \ref{fig:Segregation} because  ethnic groups of equal size are formally identical and thus reach the same numeric values of segregation. Fig. \ref{fig:SegregationMinority} reproduces Fig. \ref{fig:Segregation} for societies with an 80\% majority of ethnicity 1 (red). In contrast to Fig. \ref{fig:Segregation}, Fig. \ref{fig:SegregationMinority} shows the emergent ethnic and value segregation and the neighborhood densities for all four different types of agents (cf. Fig. \ref{fig:AnalysisMapExamples}A) separately.  Roughly summarized, increased ethnic segregation, value segregation or neighborhood density appear more drastic for the minority ethnicity. In particular, the difference in emerged ethnic segregation for value-oriented agents and ethnicity-oriented agents of the minority condition is striking.
+
+
+
+
+It is important to notice that all the quantitative results presented hold only for societies with densities of 0.7 and also only for the given world of $51\times 51$ patches with periodic boundary conditions (torus). Nevertheless, results would turn out similar for larger and not too smaller worlds. Higher densities would affect the location of the order-disorder transition. Under higher densities it is generally more difficult for a society to reach happiness for all agents because of limited space to move.
+
+
+
+
+```{r SegregationMinority, fig.pos='H', width = '600%', fig.align="center", fig.cap="Same panel structure as Fig.\\ref{fig:Segregation} but for societies with an 80\\% majority of Ethnicity 1 and a 20\\% minority of Ethnicity 2. Ethnic segregation, value segregation, and neighborhood density are computed separately for the ethnicity-oriented majority (40\\% of population), the value-oriented majority (40\\%), the ethnicity-oriented minority (10\\%), the value-oriented minority (10\\%). The horizontal guideline are set to show the baseline value segregation (50\\%) the baseline ethnic segregation of minority and majority (20\\% and 80\\%) and the baseline density (70\\%). "}
+All %>% filter(density == 70, id == "A", fraction_majority == 80, value_homophily == 30) %>%
+	gather(key = subgroup, value = fraction, simcolorGS, simcolorGC, simshapeGS, simshapeGC, numneiGS, numneiGC,
+		simcolorRS, simcolorRC, simshapeRS, simshapeRC, numneiRS, numneiRC) %>%
+	mutate(`Similarity wanted` = fct_relevel(fct_collapse(subgroup, 
+		`ethnicity-oriented` = c("simcolorGS", "simshapeGS", "numneiGS", "simcolorRS", "simshapeRS", "numneiRS"), 
+		`value-oriented`=c("simcolorGC", "simshapeGC","numneiGC","simcolorRC", "simshapeRC", "numneiRC")), "ethnicity-oriented"),
+		Segregation = fct_relevel(fct_collapse(subgroup, 
+			`Ethnic Segreg.` = c("simcolorGC", "simcolorRC", "simcolorGS", "simcolorRS"), 
+			`Value Segreg.` = c("simshapeGS", "simshapeGC", "simshapeRS", "simshapeRC"),
+			`Neighbor. density` = c("numneiGS", "numneiGC", "numneiRS", "numneiRC")), "Ethnic Segreg.", "Value Segreg."),
+		Ethnicity = fct_relevel(fct_collapse(subgroup, 
+			`Ethnicity 2` = c("simshapeGS", "simshapeGC", "simcolorGS", "simcolorGC", "numneiGS", "numneiGC"),
+			`Ethnicity 1` = c("simcolorRS", "simcolorRC", "simshapeRS", "simshapeRC", "numneiRS", "numneiRC")), "Ethnicity 1"),
+		threshold_type = "Ethnic homophily\n Value hom. = 0.3",
+		`Homophily threshold` = ethnic_homophily/100) %>% rbind(
+			All %>% filter(density == 70, id == "A", fraction_majority == 80, ethnic_homophily == 30) %>%
+				gather(key = subgroup, value = fraction, simcolorGS, simcolorGC, simshapeGS, simshapeGC, numneiGS, numneiGC,
+					simcolorRS, simcolorRC, simshapeRS, simshapeRC, numneiRS, numneiRC) %>%
+				mutate(`Similarity wanted` = fct_relevel(fct_collapse(subgroup, 
+					`ethnicity-oriented` = c("simcolorGS", "simshapeGS", "numneiGS", "simcolorRS", "simshapeRS", "numneiRS"), 
+					`value-oriented`=c("simcolorGC","simshapeGC","numneiGC","simcolorRC","simshapeRC","numneiRC")),"ethnicity-oriented"),
+					Segregation = fct_relevel(fct_collapse(subgroup, 
+						`Ethnic Segreg.` = c("simcolorGC", "simcolorRC", "simcolorGS", "simcolorRS"), 
+						`Value Segreg.` = c("simshapeGS", "simshapeGC", "simshapeRS", "simshapeRC"),
+						`Neighbor. density`=c("numneiGS","numneiGC","numneiRS","numneiRC")),"Ethnic Segreg.","Value Segreg."),
+					Ethnicity = fct_relevel(fct_collapse(subgroup, 
+						`Ethnicity 2` = c("simshapeGS", "simshapeGC", "simcolorGS", "simcolorGC", "numneiGS", "numneiGC"),
+						`Ethnicity 1` = c("simcolorRS", "simcolorRC", "simshapeRS", "simshapeRC", "numneiRS", "numneiRC")), "Ethnicity 1"),
+					threshold_type = "Value homophily \n Ethnic hom. = 0.3",
+					`Homophily threshold` = value_homophily/100)
+		) %>% 
+	ggplot(aes(x = `Homophily threshold` , y = fraction, shape = `Similarity wanted`, color = Ethnicity)) + 
+	geom_line() + geom_point(size=1.5) +
+	facet_grid(Segregation ~ threshold_type) + coord_fixed() + ylab("") +
+	scale_shape_manual(values=c(15,19), guide = guide_legend(title="")) +
+	scale_color_manual(values=c("red", "green"), guide = guide_legend(title="")) + 
+	scale_x_continuous(limits = c(0,1), breaks=c(0,0.3,0.6,1)) + 
+	scale_y_continuous(limits = c(0,1), breaks=c(0,0.2,0.5,0.7,0.8,1)) +
+	theme_bw() + theme(legend.position = "bottom",	panel.grid.minor.x = element_blank(),
+		panel.grid.minor.y = element_blank(), legend.margin=margin(0,0,0,0),
+		legend.box.margin=margin(-4,-4,-4,-4))
+```
+
+# Conclusions and Discussion
+
+In a population of individuals from two ethnic groups of which half are value-oriented and define similarity based on shared values of ethnic tolerance, ethnic segregation is generally reduced compared to the Schelling's original model. This is because the value-oriented people of both ethnic groups tend to segregate from ethnicity-oriented people in ethnically mixed regions, while the ethnicity-oriented people tend to segregate in regions separated by ethnicity. Interestingly, the ethnically mixed region show a higher neighborhood density. Maybe, we have identified some driving force which provide an explanation for the empirical phenomenon that ethnic diversity as well as ethnic tolerance is higher in densely populated areas (e.g. cities), while regions with low population density often show both less ethnic diversity and less ethnic tolerance. We do not claim, that the mechanisms in our model are the only explanation for differences in diversity and tolerance values between cities and rural areas, but we think their emergence in such a simple model is worth mentioning. 
+
+Further on, our results show some interesting cross-contagion effects which can shed some light on unintended consequence of individuals strengthening their homophily preferences. 
+When tolerant people increase their homophily preferences, e.g. through aggregation with tolerant people and rejection of nontolerant attitudes, this might create more ethnic segregation over time, mostly in the areas left by tolerant where ethnicity-oriented people would live. This is remarkable because the increase of ethnic segregation is neither through any change of preferences of the people who care about ethnicity, nor is it intended by the promotion of tolerance.
+When, instead, ethnicity-oriented people increase their homophily preferences, e.g. through an increase of racist sentiments (for whatever reason), this creates over time more value segregation for all subpopulations. This is remarkable, because ethnicity-oriented agents would accept tolerant others of the same ethnicity in their neighborhood, but end up with less of them. 
+In general, value segregation makes perception bias about the value distribution in the whole society more likely. In particular, ethnicity-oriented people extrapolating from their neighborhoods (with no or few tolerant people) might severely underestimate or not even believe the degree of ethnic tolerance in the society. Of course, this also holds the other way round for tolerant people who might underestimate the degree of ethnic homophily preferences in the society. 
+In the ethnic minority cross-contagion effects are more drastic. This demonstrates that relative group sizes plays a role in Schelling-type dynamics in addition to homophily preferences and spatial constraints. In the condition of minority, aggregation of value-oriented agents turn ethnically mixed neighborhood more attractive to ethnicity-oriented agents of their group, so to ethnically segregate. The result also offers an alternative to the assumption of inevitable assimilation of minority groups as suggested by Esser [@Esser2010].
+
+
+We recognize some areas of further modeling work. First, the attribution of values could be more realistically defined as a continuous and not just a categorical state variable. This can also facilitate comparison with real-world data. Theoretically, it means to explore if such heterogeneity of agents leads to qualitatively new phenomena. In the same direction, agents could pursue ethnic or value homophily in parallel with different importance. In general, a better empirical understanding of the cognition of agents with respect to their actual formation of homophily preferences is fundamental to judge the implications of our model's results for empirical application.
+The regular grid might be a reasonable approximation of the real world for many purposes, but human settlement shows much higher variation of local population density then can be modeled in the grid with only one resident per patch. Multiple residents per patch might be a fruitful route to model this variation more realistically [@GargiuloGandicaea2017EmergentDenseSuburbs]. 
+
+
+Despite these and other potential extensions and robustness tests, we think that different and overlapping definitions of
+similarity is a very useful extension to Schelling's model to describe complex and apparently contradicting scenarios of residential segregation in modern multi-ethnic societies. 
+
+Further on, in multi-ethnic societies resulting from migration, the constraints where the "interplay of individual choices" [@schelling69, p.488] occur are likely to not to happen only in physical space, but also with respect to attitudes, social classes and cultural identities, meaning that also these, not only the place of residence, are subject to change. The heterogeneity of people in attributing importance to one dimension over the others and define similarity processes contribute to the complexity of such scenarios. This is especially of interest form an inter-generational perspective. The degree of adaptation of previous generations might constitute the basic option for the successful investment of new generations in the receiving societies context [@Esser2010]. We can  adapt this to emerging segregation and the chance it implies for interaction between ethnic groups [@massey88;@clark2015]. While the influence of residential segregation on societal integration is acknowledged, the underlying processes and causality directions are still not [@bolt2010]. We believe that the complex system perspective and agent-based modelling can support empirical research in this field and in particular that the extension of value-oriented tolerant agents in Schelling's model will find future applications in this direction.
+
+
+# References
+
