@@ -322,7 +322,7 @@ true
 "" ""
 PENS
 "Ethnic Seg." 1.0 0 -5825686 true "" "plot mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
-"Value Segreg." 1.0 0 15 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
+"Value Seg." 1.0 0 15 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
 "Neighborhood D." 1.0 0 -9276814 true "" "plot mean [count (turtles-on neighbors)] of turtles / 8"
 "Unhappy" 1.0 0 -16777216 true "" "plot (count turtles with [happy? = false] / count turtles)"
 
