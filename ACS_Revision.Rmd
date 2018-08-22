@@ -169,10 +169,10 @@ All %>%  filter(density == 70, id %in% c("A","OrigA"), value_homophily == ethnic
 	geom_hline(aes(yintercept = baseline),
 		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.52,0.58,0.68,0.82)),linetype="dotted",color="magenta") +
 	geom_hline(aes(yintercept = baseline),
-		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.5,0.5,0.5,0.5)), linetype="dotted",color="blue") +
+		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.5,0.5,0.5,0.5)), linetype="dotted",color="green") +
 	facet_grid(. ~ factor(fraction_majority, labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority"))) + coord_fixed() +
 	labs(x = "Ethnic and value homophily threshold",y = "") +
-	scale_color_manual(name="",labels=c("Ethnic Segregation","Value Segregation","Fraction happy","Segregation Original Schelling"), values=c("magenta","blue", "black","magenta")) +
+	scale_color_manual(name="",labels=c("Ethnic Segregation","Value Segregation","Fraction happy","Segregation Original Schelling"), values=c("magenta","green", "black","magenta")) +
 	scale_size_manual(values=c(1,0.3)) +
 	scale_linetype_manual(values=c("solid","dashed")) +
 	scale_x_continuous(breaks=c(0,0.3,0.6,1))+
@@ -274,9 +274,9 @@ suppressMessages(
 			), color = "black", size=1) +
 		facet_grid(Segregation ~ threshold_type) + coord_fixed() + ylab("") +
 		scale_shape_manual(values=c(46,19,15,1), guide = FALSE) +
-		scale_color_manual(values=c("gray","blue", "magenta"), guide = guide_legend(override.aes = list(shape = c(46,19,15),
+		scale_color_manual(values=c("gray","green", "magenta"), guide = guide_legend(override.aes = list(shape = c(46,19,15),
 			linestyle=c("solid","solid","solid"),
-			color = c("gray","blue","magenta")), title ="" )) +
+			color = c("gray","green","magenta")), title ="" )) +
 		scale_x_continuous(limits = c(0,1), breaks=c(0,0.3,0.6,1)) +
 		scale_y_continuous(limits = c(0.49,1), breaks=c(0.5,0.7,1)) +
 		theme_bw() + theme(legend.position = "bottom",	panel.grid.minor.x = element_blank(), 
@@ -359,7 +359,7 @@ All %>% filter(density == 70, id == "A", fraction_majority == 80, value_homophil
 	geom_line() + geom_point(size=1.5) +
 	facet_grid(Segregation ~ threshold_type) + coord_fixed() + ylab("") +
 	scale_shape_manual(values=c(15,19), guide = guide_legend(title="")) +
-	scale_color_manual(values=c("red", "green"), guide = guide_legend(title="")) + 
+	scale_color_manual(values=c("blue", "orange"), guide = guide_legend(title="")) + 
 	scale_x_continuous(limits = c(0,1), breaks=c(0,0.3,0.6,1)) + 
 	scale_y_continuous(limits = c(0,1), breaks=c(0,0.2,0.5,0.7,0.8,1)) +
 	theme_bw() + theme(legend.position = "bottom",	panel.grid.minor.x = element_blank(),
