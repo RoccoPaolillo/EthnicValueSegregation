@@ -22,21 +22,25 @@ library(gridExtra)
 
 ## Load data
 #path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
-#path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
 setwd(path)
 if (file.exists("Alldata.Rdata")) {
-	load("Alldata.Rdata") 
+	load("data/Alldata.Rdata") 
 } else {
 	OrigA <- read_csv(paste0(path,"data/dataset_schelling.csv")) %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
 	
 	A <- read_csv(paste0(path,"data/dataset_extension.csv")) %>%
+	OrigA <- read_csv("data/dataset_schelling.csv") %>%
+		mutate(unhappyp=unhappy/turtles) %>% 
+		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
+	
+	A <- read_csv("data/dataset_extension.csv") %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
 	
 	All <- bind_rows(list(A=A, OrigA=OrigA),.id = "id")
-	save(All, file = "Alldata.Rdata")
+	save(All, file = "data/Alldata.Rdata")
 }
 ```
 \abstract{In Schelling's segregation model agents of two ethnic groups reside in a regular grid and aim to live in a neighborhood that matches the minimum desired fraction of members of the same ethnicity. The model shows that observed segregation can be the emergent result of people interacting under spatial constraints in pursuit of such homophily preferences. Even mild homophily preferences can generate high degrees of segregation at the macro level. In modern, ethnically diverse societies people might not define similarity based on ethnicity. Instead, shared tolerance towards ethnic diversity might play a more significant role, impacting segregation and integration patterns in societies. Bearing this consideration in mind, we extend Schelling's model by dividing the population of agents into value-oriented and ethnicity-oriented agents. Using parameter sweeping, we explore the consequences that the mutual adaptation of these two types of agents has on ethnic segregation, value segregation, and population density in the neighborhood. Such consequences are examined for equally sized ethnic groups and for majority-minority conditions. The introduction of value-oriented agents reduces total ethnic segregation when compared to Schelling's original model, but the new phenomenon of value segregation appears to be more pronounced than ethnic segregation. Furthermore, due to cross-contagion, stronger ethnic homophily preferences lead not only to greater ethnic segregation but also to more value segregation. Stronger value-orientation of the tolerant agents similarly leads to increased ethnic segregation of the ethnicity-oriented agents. Also, value-oriented agents tend live in neighborhoods with more agents than ethnicity-oriented agents. In majority-minority settings, such effects appear to be more drastic for the minority than the majority ethnicity.}
@@ -190,6 +194,7 @@ The opposite occurs in Example 3: When the value-oriented agents increase their 
 
 ```{r AnalysisMapExamples, out.extra='page=1', fig.pos='H', out.width = '100%', fig.align="center", fig.cap="(A) Types of agents and who they consider similar. (B) The $(\\theta^\\text{E}, \\theta^\\text{V})$-space of different combinations of ethnic and value homophily thresholds. The gray diagonal refers to the parameters in Fig. 1. The black lines refer to the parameters analyzed in Figs. 3 and 5. Further, four examples of simulation outcomes for $(\\theta^\\text{E}, \\theta^\\text{V}) = (0.3,0.3), (0.3,0.6), (0.6,0.3), (0.6,0.6)$. (C) Numeric values for ethnic segregation, value segregation, and neighborhood density for the four examples in equal group size conditions. Numbers are computed once for the total population and separately for the half-groups comprising the ethnicity-oriented and the value-oriented agents. The numbers derive from the simulation analysis, whereby each number is the average over ten runs. A separation with respect to ethnicity is not of interest, since the condition that is presented is for equal group size, meaning the numbers would essentially be the same for both ethnicities. "}
 knitr::include_graphics(paste0(path,"Images/ACSFigs.pdf"))
+
 summarytable <- function(All, thetaE, thetaV, maj) {
 	a <- All %>% group_by() %>% 
 		filter(id == "A", fraction_majority == maj, density == 70, ethnic_homophily == thetaE, value_homophily == thetaV) %>% 
