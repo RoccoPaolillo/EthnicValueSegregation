@@ -21,16 +21,14 @@ library(grid)
 library(gridExtra)
 
 ## Load data
-path <- "C:/Users/rocpa/Desktop/EthnicValueSegregation-master/"
-setwd(path)
-if (file.exists("Alldata.Rdata")) {
+if (file.exists("data/Alldata.Rdata")) {
 	load("data/Alldata.Rdata") 
 } else {
-	OrigA <- read_csv(paste0(path,"data/dataset_schelling.csv")) %>%
+	OrigA <- read_csv("data/dataset_schelling.csv") %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
 	
-	A <- read_csv(paste0(path,"data/dataset_extension.csv")) %>%
+	A <- read_csv("data/dataset_extension.csv") %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
 
@@ -190,7 +188,7 @@ The opposite occurs in Example 3: When the value-oriented agents increase their 
 
 
 ```{r AnalysisMapExamples, out.extra='page=1', fig.pos='H', out.width = '100%', fig.align="center", fig.cap="(A) Types of agents and who they consider similar. (B) The $(\\theta^\\text{E}, \\theta^\\text{V})$-space of different combinations of ethnic and value homophily thresholds. The gray diagonal refers to the parameters in Fig. 1. The black lines refer to the parameters analyzed in Figs. 3 and 5. Further, four examples of simulation outcomes for $(\\theta^\\text{E}, \\theta^\\text{V}) = (0.3,0.3), (0.3,0.6), (0.6,0.3), (0.6,0.6)$. (C) Numeric values for ethnic segregation, value segregation, and neighborhood density for the four examples in equal group size conditions. Numbers are computed once for the total population and separately for the half-groups comprising the ethnicity-oriented and the value-oriented agents. The numbers derive from the simulation analysis, whereby each number is the average over ten runs. A separation with respect to ethnicity is not of interest, since the condition that is presented is for equal group size, meaning the numbers would essentially be the same for both ethnicities. "}
-knitr::include_graphics(paste0(path,"Images/ACSFigs.pdf"))
+knitr::include_graphics("images/ACSFigs.pdf")
 
 summarytable <- function(All, thetaE, thetaV, maj) {
 	a <- All %>% group_by() %>% 
