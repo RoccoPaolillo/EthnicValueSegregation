@@ -322,7 +322,7 @@ true
 "" ""
 PENS
 "Ethnic Seg." 1.0 0 -5825686 true "" "plot mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
-"Value Seg." 1.0 0 15 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
+"Value Seg." 1.0 0 -13840069 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]"
 "Neighborhood D." 1.0 0 -9276814 true "" "plot mean [count (turtles-on neighbors)] of turtles / 8"
 "Unhappy" 1.0 0 -16777216 true "" "plot (count turtles with [happy? = false] / count turtles)"
 
@@ -343,7 +343,7 @@ true
 "" ""
 PENS
 "Ethnic Seg." 1.0 0 -5825686 true "" "plot mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"s\"]"
-"Value Seg." 1.0 0 15 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"s\"]"
+"Value Seg." 1.0 0 -13840069 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"s\"]"
 "Neighborhood D." 1.0 0 -9276814 true "" "plot mean [count (turtles-on neighbors)] of turtles with [first shape = \"s\"] / 8"
 "Unhappy" 1.0 0 -16777216 true "" "plot (count turtles with [happy? = false and first shape = \"s\"] / count turtles with [first shape = \"s\"])"
 
@@ -364,7 +364,7 @@ true
 "" ""
 PENS
 "Ethnic Seg." 1.0 0 -5825686 true "" "plot mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"c\"]"
-"Value Seg." 1.0 0 15 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"c\"]"
+"Value Seg." 1.0 0 -13840069 true "" "plot mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = \"c\"]"
 "Neighborhood D." 1.0 0 -9276814 true "" "plot mean [count (turtles-on neighbors)] of turtles with [shape = \"circle\"] / 8"
 "Unhappy" 1.0 0 -16777216 true "" "plot (count turtles with [happy? = false and first shape = \"c\"] / count turtles with [first shape = \"c\"])"
 
