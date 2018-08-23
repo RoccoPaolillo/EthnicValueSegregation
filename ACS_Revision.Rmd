@@ -302,8 +302,8 @@ All %>% filter(density == 70, id == "A") %>%  mutate(happy = 1 - unhappyp) %>%
 		labels=c("Fraction happy", "Ethnic segreg.", "Value segreg.")),
 		fraction_majority = factor(fraction_majority, 
 		labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority")),
-		`Ethnic homohily threshold` = ethnic_homophily/100, 
-		`Value homohily threshold` = value_homophily/100) %>% 
+		`Ethnic homophily threshold` = ethnic_homophily/100, 
+		`Value homophily threshold` = value_homophily/100) %>% 
 	ggplot(aes(x = `Ethnic homohily threshold`, y = `Value homohily threshold`, fill = Fraction)) + 
 	geom_tile() + 
 	annotate("point", x=c(0.3,0.3,0.6,0.6), y=c(0.3,0.6,0.3,0.6), shape=8) +
