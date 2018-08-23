@@ -744,7 +744,7 @@ The population is equally split in ethnicity-oriented agents and value-oriented 
 
 ### Static state variables of agents:
 
-* **Ethnicity** (color tag): Ethnicity 1 (red) / Ethnicity 2 (green)
+* **Ethnicity** (color tag): Ethnicity 1 (blue) / Ethnicity 2 (orange)
 
 * **Value orientation** (shape tag): ethnicity-oriented (square) / value-oriented (circle)
 
@@ -768,7 +768,7 @@ Global Parameters can be updated during the simulation.
 
 ### Initial conditions: 
 * *density* → density society: probability of an agent to appear on a cell
-* *fraction_majority* → relative group size: ratio Ethnicity 1 (red) / Ethnicity 2 (green)
+* *fraction_majority* → relative group size: ratio Ethnicity 1 (blue) / Ethnicity 2 (orange)
 
 ### Global parameters:
 * *ethnic_homophily* → ethnic homophily threshold: 
