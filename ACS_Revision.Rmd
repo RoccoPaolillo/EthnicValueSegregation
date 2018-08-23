@@ -21,7 +21,7 @@ library(grid)
 library(gridExtra)
 
 ## Load data
-#path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
+path <- "C:/Users/rocpa/Desktop/EthnicValueSegregation-master/"
 setwd(path)
 if (file.exists("Alldata.Rdata")) {
 	load("data/Alldata.Rdata") 
@@ -31,18 +31,15 @@ if (file.exists("Alldata.Rdata")) {
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
 	
 	A <- read_csv(paste0(path,"data/dataset_extension.csv")) %>%
-	OrigA <- read_csv("data/dataset_schelling.csv") %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
 		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
-	
-	A <- read_csv("data/dataset_extension.csv") %>%
-		mutate(unhappyp=unhappy/turtles) %>% 
-		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
+
 	
 	All <- bind_rows(list(A=A, OrigA=OrigA),.id = "id")
 	save(All, file = "data/Alldata.Rdata")
 }
 ```
+
 \abstract{In Schelling's segregation model agents of two ethnic groups reside in a regular grid and aim to live in a neighborhood that matches the minimum desired fraction of members of the same ethnicity. The model shows that observed segregation can be the emergent result of people interacting under spatial constraints in pursuit of such homophily preferences. Even mild homophily preferences can generate high degrees of segregation at the macro level. In modern, ethnically diverse societies people might not define similarity based on ethnicity. Instead, shared tolerance towards ethnic diversity might play a more significant role, impacting segregation and integration patterns in societies. Bearing this consideration in mind, we extend Schelling's model by dividing the population of agents into value-oriented and ethnicity-oriented agents. Using parameter sweeping, we explore the consequences that the mutual adaptation of these two types of agents has on ethnic segregation, value segregation, and population density in the neighborhood. Such consequences are examined for equally sized ethnic groups and for majority-minority conditions. The introduction of value-oriented agents reduces total ethnic segregation when compared to Schelling's original model, but the new phenomenon of value segregation appears to be more pronounced than ethnic segregation. Furthermore, due to cross-contagion, stronger ethnic homophily preferences lead not only to greater ethnic segregation but also to more value segregation. Stronger value-orientation of the tolerant agents similarly leads to increased ethnic segregation of the ethnicity-oriented agents. Also, value-oriented agents tend live in neighborhoods with more agents than ethnicity-oriented agents. In majority-minority settings, such effects appear to be more drastic for the minority than the majority ethnicity.}
 
 
@@ -304,7 +301,7 @@ All %>% filter(density == 70, id == "A") %>%  mutate(happy = 1 - unhappyp) %>%
 		labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority")),
 		`Ethnic homophily threshold` = ethnic_homophily/100, 
 		`Value homophily threshold` = value_homophily/100) %>% 
-	ggplot(aes(x = `Ethnic homohily threshold`, y = `Value homohily threshold`, fill = Fraction)) + 
+	ggplot(aes(x = `Ethnic homophily threshold`, y = `Value homophily threshold`, fill = Fraction)) + 
 	geom_tile() + 
 	annotate("point", x=c(0.3,0.3,0.6,0.6), y=c(0.3,0.6,0.3,0.6), shape=8) +
 	facet_grid(measure ~ fraction_majority) + 
@@ -315,7 +312,6 @@ All %>% filter(density == 70, id == "A") %>%  mutate(happy = 1 - unhappyp) %>%
 	scale_y_continuous(limits = c(-0.05,1.05), breaks=seq(0,1,0.5)) +
 	theme_bw() + theme(legend.position = "bottom", panel.grid.minor.x = element_blank(), legend.title=element_blank())
 ```
-
 For societies with ethnic groups of unequal size, it makes sense to separately examine the differences in the emergent ethnic or value segregation separately for the different ethnic groups. This task was not of interest in Fig. \ref{fig:Segregation} because  ethnic groups of equal size are formally identical and thus reach the same numeric values of segregation. Fig. \ref{fig:SegregationMinority} reproduces Fig. \ref{fig:Segregation} for societies with an 80\% majority of ethnicity 1 (blue). In contrast to Fig. \ref{fig:Segregation}, Fig. \ref{fig:SegregationMinority} separately illustrates the emergent ethnic and value segregations and the neighborhood densities for all four types of agents (cf. Fig. \ref{fig:AnalysisMapExamples}A) separately. To roughly summarize, increased ethnic segregation, value segregation and population density in the neighborhood appear to be more drastic for the minority ethnicity. In particular, the difference in the emerged ethnic segregation for value-oriented agents and ethnicity-oriented agents of the minority condition is striking.
 
 
