@@ -22,6 +22,7 @@ library(gridExtra)
 
 ## Load data
 #path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
+#path <- "C:/Users/rocpa/Desktop/ACS_revision_09_08/"
 setwd(path)
 if (file.exists("Alldata.Rdata")) {
 	load("Alldata.Rdata") 
