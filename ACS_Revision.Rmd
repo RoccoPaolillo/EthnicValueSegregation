@@ -385,19 +385,7 @@ The regular grid might be a reasonable approximation of the real world for many 
 
 
 Despite these and other potential extensions and robustness tests, we think that different and overlapping definitions of
-similarity are useful extensions to Schelling's model as they can aid in describing complex and apparently contradicting segregation scenarios.  In modern, multi-ethnic societies, this complexity emerges for the cohexistence of n the boundaries of segregation can comprise not only ethnic boundaries, but numerous other dimensions such as socio-economic status or ideologies that are crossed by migrants
-
-Diverse boundaries
-Intergenerational perspective
-
-[@wimmer2007]
-
-
-as they can aid in describing complex and apparently contradicting residential segregation scenarios in modern, multi-ethnic societies. 
-
-
-
-Furthermore, in multi-ethnic societies resulting from migration, the constraints where the "interplay of individual choices" [@schelling69, p.488] occur are likely to not only happen in physical space, but also with respect to attitudes, social classes, and cultural identities, meaning that these and not only the place of residence are subject to change. The heterogeneity of people in attributing importance to one dimension over others and in defining similarity contribute to the complexity of such scenarios. Understanding the indiviudal drivers and dynamics of segregation and integration between diverse groups might be especially of interest from an inter-generational perspective. The degree of adaptation of previous generations might constitute the basic option for the successful investment of new generations in the context of receiving societies [@Esser2010]. We can adapt this argument to emerging segregation and the chance it implies for interaction between ethnic groups [@massey88;@clark2015]. While the influence of residential segregation on societal integration is acknowledged, the underlying processes and causality directions are still not [@bolt2010]. We believe that the complex system perspective and agent-based modeling can support empirical research in this field and, in particular, that the extension of value-oriented tolerant agents in Schelling's model will find future applications in this direction.
+similarity are useful extensions to Schelling's model as they can aid in describing complex and apparently contradicting segregation scenarios. In modern, multi-ethnic societies people segregate not only along ethnic boundaries, but many dimensions from social class to cultural norms, which can increase or decrease the distance between ethnic groups. From an intergenerational perspective, the degree of adaptation of previous generations from minority groups along such boundaries constitutes the antecedent for the successful investment of new generations in the receiving society [@Esser2010]. This has clearly implications for the cohesion of societies itself. We believe that the complex system perspective and agent-based modeling can support empirical research in this field and, in particular, that the extension of value-oriented tolerant agents in Schelling's model will find future applications in this direction.
 
 
 # References
