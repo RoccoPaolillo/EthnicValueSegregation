@@ -15,30 +15,23 @@ header-includes:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, fig.lp="fig:")
 
-
-
 library(tidyverse)
 library(grid)
 library(gridExtra)
 
-## Load data
-if (file.exists("data/Alldata.Rdata")) {
-	load("data/Alldata.Rdata") 
-} else {
-	OrigA <- read_csv("data/dataset_schelling.csv") %>%
+Ex <- read_csv("data/EthnicValueSegregation Extension-table.csv", skip = 6)
+names(Ex) <- pull(read_csv("data/variablecoding_NetLogo2R.csv")[,1]) # This is to shorten variable names
+Orig <- read_csv("data/EthnicValueSegregation Original_Schelling-table.csv", skip = 6) 
+names(Orig) <- pull(read_csv("data/variablecoding_NetLogo2R.csv")[,1]) # This is to shorten variable names
+All <- bind_rows(list(A =	Ex %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
-		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
-	
-	A <- read_csv("data/dataset_extension.csv") %>%
+		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean),
+	OrigA = Orig %>%
 		mutate(unhappyp=unhappy/turtles) %>% 
-		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)
-
-	
-	All <- bind_rows(list(A=A, OrigA=OrigA),.id = "id")
-	save(All, file = "data/Alldata.Rdata")
-}
+		group_by(density, fraction_majority, ethnic_homophily, value_homophily) %>% summarise_all(mean)),
+	.id = "id")
 ```
-
+	
 \abstract{In Schelling's segregation model agents of two ethnic groups reside in a regular grid and aim to live in a neighborhood that matches the minimum desired fraction of members of the same ethnicity. The model shows that observed segregation can be the emergent result of people interacting under spatial constraints in pursuit of such homophily preferences. Even mild homophily preferences can generate high degrees of segregation at the macro level. In modern, ethnically diverse societies people might not define similarity based on ethnicity. Instead, shared tolerance towards ethnic diversity might play a more significant role, impacting segregation and integration patterns in societies. Bearing this consideration in mind, we extend Schelling's model by dividing the population of agents into value-oriented and ethnicity-oriented agents. Using parameter sweeping, we explore the consequences that the mutual adaptation of these two types of agents has on ethnic segregation, value segregation, and population density in the neighborhood. Such consequences are examined for equally sized ethnic groups and for majority-minority conditions. The introduction of value-oriented agents reduces total ethnic segregation when compared to Schelling's original model, but the new phenomenon of value segregation appears to be more pronounced than ethnic segregation. Furthermore, due to cross-contagion, stronger ethnic homophily preferences lead not only to greater ethnic segregation but also to more value segregation. Stronger value-orientation of the tolerant agents similarly leads to increased ethnic segregation of the ethnicity-oriented agents. Also, value-oriented agents tend to live in neighborhoods with more agents than ethnicity-oriented agents. In majority-minority settings, such effects appear to be more drastic for the minority than the majority ethnicity.}
 
 
@@ -197,8 +190,8 @@ knitr::include_graphics("images/ACSFigs.pdf")
 # summarytable <- function(All, thetaE, thetaV, maj) {
 # 	a <- All %>% group_by() %>% 
 # 		filter(id == "A", fraction_majority == maj, density == 70, ethnic_homophily == thetaE, value_homophily == thetaV) %>% 
-# 		select(numnei,numneiRS,numneiGS,numneiRC,numneiGC,simcolor,simcolorRS,simcolorGS,simcolorRC,simcolorGC,simshape,simshapeRS,simshapeGS,simshapeRC,simshapeGC) %>% matrix(ncol=5, byrow=T) %>% as.data.frame(row.names = c("Neighborhood density", "Ethnic segregation", "Value segregation"))
-# 	names(a) <- c("Total", "RS", "GS", "RC", "GC")
+# 		select(numnei,numneiBS,numneiOS,numneiBC,numneiOC,simcolor,simcolorBS,simcolorOS,simcolorBC,simcolorOC,simshape,simshapeBS,simshapeOS,simshapeBC,simshapeOC) %>% matrix(ncol=5, byrow=T) %>% as.data.frame(row.names = c("Neighborhood density", "Ethnic segregation", "Value segregation"))
+# 	names(a) <- c("Total", "BS", "OS", "BC", "OC")
 # 	a
 # }
 # simplesummarytable <- function(All, thetaE, thetaV, maj) {
@@ -312,33 +305,33 @@ It is important to note that all the presented quantitative results hold only fo
 
 ```{r SegregationMinority, width = '600%', fig.align="center", fig.cap="Same panel structure as Fig.\\ref{fig:Segregation} but for societies with an 80\\% majority of ethnicity 1 and a 20\\% minority of ethnicity 2. Ethnic segregation, value segregation, and neighborhood density are computed separately for the ethnicity-oriented majority (40\\% of the population), the value-oriented majority (40\\%), the ethnicity-oriented minority (10\\%), and the value-oriented minority (10\\%). The horizontal guidelines illustrate the baseline value segregation (50\\%) the baseline ethnic segregation of the minority and the majority (20\\% and 80\\%), and the baseline density (70\\%). "}
 All %>% filter(density == 70, id == "A", fraction_majority == 80, value_homophily == 30) %>%
-	gather(key = subgroup, value = fraction, simcolorGS, simcolorGC, simshapeGS, simshapeGC, numneiGS, numneiGC,
-		simcolorRS, simcolorRC, simshapeRS, simshapeRC, numneiRS, numneiRC) %>%
+	gather(key = subgroup, value = fraction, simcolorOS, simcolorOC, simshapeOS, simshapeOC, numneiOS, numneiOC,
+		simcolorBS, simcolorBC, simshapeBS, simshapeBC, numneiBS, numneiBC) %>%
 	mutate(`Similarity wanted` = fct_relevel(fct_collapse(subgroup, 
-		`ethnicity-oriented` = c("simcolorGS", "simshapeGS", "numneiGS", "simcolorRS", "simshapeRS", "numneiRS"), 
-		`value-oriented`=c("simcolorGC", "simshapeGC","numneiGC","simcolorRC", "simshapeRC", "numneiRC")), "ethnicity-oriented"),
+		`ethnicity-oriented` = c("simcolorOS", "simshapeOS", "numneiOS", "simcolorBS", "simshapeBS", "numneiBS"), 
+		`value-oriented`=c("simcolorOC", "simshapeOC","numneiOC","simcolorBC", "simshapeBC", "numneiBC")), "ethnicity-oriented"),
 		Segregation = fct_relevel(fct_collapse(subgroup, 
-			`Ethnic Segreg.` = c("simcolorGC", "simcolorRC", "simcolorGS", "simcolorRS"), 
-			`Value Segreg.` = c("simshapeGS", "simshapeGC", "simshapeRS", "simshapeRC"),
-			`Neighbor. density` = c("numneiGS", "numneiGC", "numneiRS", "numneiRC")), "Ethnic Segreg.", "Value Segreg."),
+			`Ethnic Segreg.` = c("simcolorOC", "simcolorBC", "simcolorOS", "simcolorBS"), 
+			`Value Segreg.` = c("simshapeOS", "simshapeOC", "simshapeBS", "simshapeBC"),
+			`Neighbor. density` = c("numneiOS", "numneiOC", "numneiBS", "numneiBC")), "Ethnic Segreg.", "Value Segreg."),
 		Ethnicity = fct_relevel(fct_collapse(subgroup, 
-			`Ethnicity 2` = c("simshapeGS", "simshapeGC", "simcolorGS", "simcolorGC", "numneiGS", "numneiGC"),
-			`Ethnicity 1` = c("simcolorRS", "simcolorRC", "simshapeRS", "simshapeRC", "numneiRS", "numneiRC")), "Ethnicity 1"),
+			`Ethnicity 2` = c("simshapeOS", "simshapeOC", "simcolorOS", "simcolorOC", "numneiOS", "numneiOC"),
+			`Ethnicity 1` = c("simcolorBS", "simcolorBC", "simshapeBS", "simshapeBC", "numneiBS", "numneiBC")), "Ethnicity 1"),
 		threshold_type = "Ethnic homophily\n Value hom. = 0.3",
 		`Homophily threshold` = ethnic_homophily/100) %>% rbind(
 			All %>% filter(density == 70, id == "A", fraction_majority == 80, ethnic_homophily == 30) %>%
-				gather(key = subgroup, value = fraction, simcolorGS, simcolorGC, simshapeGS, simshapeGC, numneiGS, numneiGC,
-					simcolorRS, simcolorRC, simshapeRS, simshapeRC, numneiRS, numneiRC) %>%
+				gather(key = subgroup, value = fraction, simcolorOS, simcolorOC, simshapeOS, simshapeOC, numneiOS, numneiOC,
+					simcolorBS, simcolorBC, simshapeBS, simshapeBC, numneiBS, numneiBC) %>%
 				mutate(`Similarity wanted` = fct_relevel(fct_collapse(subgroup, 
-					`ethnicity-oriented` = c("simcolorGS", "simshapeGS", "numneiGS", "simcolorRS", "simshapeRS", "numneiRS"), 
-					`value-oriented`=c("simcolorGC","simshapeGC","numneiGC","simcolorRC","simshapeRC","numneiRC")),"ethnicity-oriented"),
+					`ethnicity-oriented` = c("simcolorOS", "simshapeOS", "numneiOS", "simcolorBS", "simshapeBS", "numneiBS"), 
+					`value-oriented`=c("simcolorOC","simshapeOC","numneiOC","simcolorBC","simshapeBC","numneiBC")),"ethnicity-oriented"),
 					Segregation = fct_relevel(fct_collapse(subgroup, 
-						`Ethnic Segreg.` = c("simcolorGC", "simcolorRC", "simcolorGS", "simcolorRS"), 
-						`Value Segreg.` = c("simshapeGS", "simshapeGC", "simshapeRS", "simshapeRC"),
-						`Neighbor. density`=c("numneiGS","numneiGC","numneiRS","numneiRC")),"Ethnic Segreg.","Value Segreg."),
+						`Ethnic Segreg.` = c("simcolorOC", "simcolorBC", "simcolorOS", "simcolorBS"), 
+						`Value Segreg.` = c("simshapeOS", "simshapeOC", "simshapeBS", "simshapeBC"),
+						`Neighbor. density`=c("numneiOS","numneiOC","numneiBS","numneiBC")),"Ethnic Segreg.","Value Segreg."),
 					Ethnicity = fct_relevel(fct_collapse(subgroup, 
-						`Ethnicity 2` = c("simshapeGS", "simshapeGC", "simcolorGS", "simcolorGC", "numneiGS", "numneiGC"),
-						`Ethnicity 1` = c("simcolorRS", "simcolorRC", "simshapeRS", "simshapeRC", "numneiRS", "numneiRC")), "Ethnicity 1"),
+						`Ethnicity 2` = c("simshapeOS", "simshapeOC", "simcolorOS", "simcolorOC", "numneiOS", "numneiOC"),
+						`Ethnicity 1` = c("simcolorBS", "simcolorBC", "simshapeBS", "simshapeBC", "numneiBS", "numneiBC")), "Ethnicity 1"),
 					threshold_type = "Value homophily \n Ethnic hom. = 0.3",
 					`Homophily threshold` = value_homophily/100)
 		) %>% 

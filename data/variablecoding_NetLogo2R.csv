@@ -1,0 +1,32 @@
+Coding_analysis,parameters_computation_NetLogo
+run_number,[run number]
+Version,Version
+density,density
+fraction_majority,fraction_majority
+value_homophily,value_homophily
+ethnic_homophily,ethnic_homophily
+move_anyway,move_anyway
+step,[step]
+turtles,count turtles
+unhappy,count turtles with [happy? = false]
+simcolor,mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]
+simcolorS,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = ""s""]"
+simcolorC,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = ""c""]"
+simcolorBS,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1  and color = 105 and first shape  =  ""s""]"
+simcolorBC,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1  and color = 105 and first shape  =  ""c""]"
+simcolorOS,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1  and color = 27 and first shape  =  ""s""]"
+simcolorOC,"mean [count (turtles-on neighbors) with [color = [color] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1  and color = 27 and first shape  =  ""c""]"
+simshape,mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1]
+simshapeS,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = ""s""]"
+simshapeC,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and first shape = ""c""]"
+simshapeBS,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and color = 105 and first shape = ""s""]"
+simshapeBC,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and color = 105 and first shape = ""c""]"
+simshapeOS,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and color = 27 and first shape = ""s""]"
+simshapeOC,"mean [count (turtles-on neighbors) with [first shape = [first shape] of myself] / count (turtles-on neighbors) ] of turtles with [ count (turtles-on neighbors) >= 1 and color = 27 and first shape = ""c""]"
+numnei,mean [count (turtles-on neighbors)] of turtles / 8
+numneiS,"mean [count (turtles-on neighbors)] of turtles with [first shape = ""s""] / 8"
+numneiC,"mean [count (turtles-on neighbors)] of turtles with [first shape = ""c""] / 8"
+numneiBS,"mean [count (turtles-on neighbors)] of turtles with [color  = 105 and first shape = ""s""] / 8"
+numneiOS,"mean [count (turtles-on neighbors)] of turtles with [color  = 27 and first shape = ""s""] / 8"
+numneiBC,"mean [count (turtles-on neighbors)] of turtles with [color  = 105 and first shape = ""c""] / 8"
+numneiOC,"mean [count (turtles-on neighbors)] of turtles with [color  = 27 and first shape = ""c""] / 8"
