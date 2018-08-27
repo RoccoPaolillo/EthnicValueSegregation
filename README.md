@@ -7,7 +7,7 @@ Rocco Paolillo, Jan Lorenz
 
 Use the NetLogo model (EthnicValueSegregation.nlogo). 
 
-It should preferable be run in NetLogo 6.0.4. (Download free https://ccl.northwestern.edu/netlogo/)
+It should preferable be run in NetLogo 6.0.4. (Download free https://ccl.northwestern.edu/netlogo/).
 It also runs in NetLogoWeb (slightly slower) in the browser. Try this link:
 http://netlogoweb.org/web?https://raw.githubusercontent.com/RoccoPaolillo/EthnicValueSegregation/master/EthnicValueSegregation.nlogo
 
