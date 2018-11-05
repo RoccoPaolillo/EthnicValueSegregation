@@ -153,27 +153,37 @@ Higher homophily thresholds in Fig. \ref{fig:OverallSegregation} show an increas
 Fig. \ref{fig:OverallSegregation} also shows that changes in the size of the majority ethnic group leaves value segregation almost unaffected. Moreover, it influences ethnic segregation in a simple way: In a society where the majority ethnicity is a fraction of $x$ the baseline ethnic segregation in random initial conditions is $x\cdot x + (1-x)\cdot (1-x)$. (Example: 80\% of agents have an ethnic segregation of 0.8 and 20\% have 0.2.) Thus, baseline ethnic segregation under 60\%, 70\%, 80\%, and 90\% majorities is 0.52, 0.58, 0.68, and 0.82. Segregation above the baseline changes proportionally with the distance between the baseline segregation and 1. 
 
 ```{r OverallSegregation, fig.pos='h', fig.cap="Ethnic and value segregation ($\\Theta^\\text{E}, \\Theta^\\text{V}$) for equal ethnic and value homophily thresholds $\\theta^\\text{E} = \\theta^\\text{V}$ in comparison to ethnic segregation in Schelling's original model. Results for societies with different sizes of each ethnic group. Dotted lines denote the baseline segregation in random initial conditions. "}
-All %>%  filter(density == 70, id %in% c("A","OrigA"), value_homophily == ethnic_homophily | id == "OrigA") %>%
+
+
+base_ethnic <- 	data.frame(fraction_majority = c(50,60,70,80,90), base_eth = c(0.5,0.52,0.58,0.68,0.82))
+base_value <- data.frame(fraction_majority = c(50,60,70,80,90), base_val = c(0.5,0.5,0.5,0.5,0.5))
+total_base <- merge(base_ethnic,base_value,by="fraction_majority")
+
+overSegr <- merge(All,total_base,by="fraction_majority")
+
+overSegr %>%  filter(density == 70, id %in% c("A","OrigA"), value_homophily == ethnic_homophily | id == "OrigA") %>%
 	mutate(happy = 1 - unhappyp) %>%
-	gather(key = subgroup, value = Similar, simcolor, simshape, happy) %>%
+	gather(key = subgroup, value = Similar, simcolor, simshape, happy, base_eth, base_val) %>%
 	filter(id == "A" | (id == "OrigA" & subgroup == "simcolor")) %>%
 	mutate(subgroup = if_else(id == "A", subgroup, id)) %>%
-	mutate(subgroup = factor(subgroup, levels=c("simcolor", "simshape", "happy", "OrigA"))) %>%
-	ggplot(aes(x = ethnic_homophily/100, y = Similar, color = subgroup, size = (id=="OrigA" | subgroup == "happy"), linetype = id)) + geom_line() +
-	geom_hline(aes(yintercept = baseline),
-		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.52,0.58,0.68,0.82)),linetype="dotted",color="magenta") +
-	geom_hline(aes(yintercept = baseline),
-		data.frame(fraction_majority = c(50,60,70,80,90), baseline = c(0.5,0.5,0.5,0.5,0.5)), linetype="dotted",color="green4") +
+	mutate(subgroup = factor(subgroup, levels=c("simcolor", "simshape", "happy", "OrigA","base_eth","base_val"))) %>%
+	ggplot(aes(x = ethnic_homophily/100, y = Similar, linetype = subgroup, colour = subgroup, size = subgroup)) + geom_line() +
+  
 	facet_grid(. ~ factor(fraction_majority, labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority"))) + coord_fixed() +
-	labs(x = "Ethnic and value homophily threshold",y = "") +
-	scale_color_manual(name="",labels=c("Ethnic Segregation","Value Segregation","Fraction happy","Segregation Original Schelling"), values=c("magenta","green4", "black","magenta")) +
-	scale_size_manual(values=c(1,0.3)) +
-	scale_linetype_manual(values=c("solid","dashed")) +
+	labs(x = "Ethnic and value homophily threshold",y = "Segregation") +
+  
+  scale_linetype_manual(name= "", labels=c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"),values=c("solid","solid","solid","dashed","dotted","dotted")) +
+  
+scale_color_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"), values = c("magenta","green4","black","magenta","magenta","green4")) +
+  
+	  scale_size_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"), values = c(1,1,0.4,0.3,0.7,0.7)) +
+	 
 	scale_x_continuous(breaks=c(0,0.3,0.6,1))+
-	scale_y_continuous(breaks=c(0,0.5,1))+
-	guides(legend.title="", colour = guide_legend(override.aes = list(linetype = c("solid","solid","solid","dashed"), size = c(1,1,0.3,0.3))), size="none", linetype="none") +
-	theme_bw() + theme(legend.position = "bottom", legend.margin=margin(0,0,0,0), legend.box.margin=margin(-10,-10,-10,-10),
-		panel.grid.minor.x = element_blank())
+	scale_y_continuous(breaks=c(0,0.5,1))  +
+guides(legend.title="", linetype = guide_legend(override.aes = list(color = c("magenta","green4", "black","magenta","magenta","green4"), size = c(1,1,0.4,0.3,0.7,0.7))), size="none") +
+theme_bw() + theme(legend.position = "bottom", legend.margin=margin(0,0,0,0), legend.box.margin=margin(-10,-10,-10,-10),
+	panel.grid.minor.x = element_blank() )
+
 ```
 
 Fig. \ref{fig:AnalysisMapExamples}B illustrates emergent equilibrium configurations. As in Fig. \ref{fig:AnalysisMapExamples}B, examples 1 and 4 show cases with equal ethnic and value homophily thresholds. For low homophily thresholds $(\theta^\text{E}, \theta^\text{V}) = (0.3,0.3)$, some clustering is visible, but still we continue to see areas in which all four types of agents are mixed. For high homophily thresholds $(\theta^\text{E}, \theta^\text{V}) = (0.6,0.6)$, areas of almost exclusively value-oriented agents are clearly visible, as well as areas of ethnicity-oriented agents for both ethnicities. Fig. \ref{fig:AnalysisMapExamples} extends the analysis to societies with a lower value-orientation and a greater ethnic-orientation and vice versa. 
