@@ -172,11 +172,11 @@ overSegr %>%  filter(density == 70, id %in% c("A","OrigA"), value_homophily == e
 	facet_grid(. ~ factor(fraction_majority, labels = c("Equal sizes","60% majority","70% majority", "80% majority", "90% majority"))) + coord_fixed() +
 	labs(x = "Ethnic and value homophily threshold",y = "Segregation") +
   
-  scale_linetype_manual(name= "", labels=c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"),values=c("solid","solid","solid","dashed","dotted","dotted")) +
+  scale_linetype_manual(name= "", labels=c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segregation","Baseline Value Segregation"),values=c("solid","solid","solid","dashed","dotted","dotted")) +
   
-scale_color_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"), values = c("magenta","green4","black","magenta","magenta","green4")) +
+scale_color_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segregation","Baseline Value Segregation"), values = c("magenta","green4","black","magenta","magenta","green4")) +
   
-	  scale_size_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segreation","Baseline Value Segregation"), values = c(1,1,0.4,0.3,0.7,0.7)) +
+	  scale_size_manual(name="", labels= c("Ethnic Segregation","Value Segregation","Fraction Happy","Segregation Original Schelling","Baseline Ethnic Segregation","Baseline Value Segregation"), values = c(1,1,0.4,0.3,0.7,0.7)) +
 	 
 	scale_x_continuous(breaks=c(0,0.3,0.6,1))+
 	scale_y_continuous(breaks=c(0,0.5,1))  +
