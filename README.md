@@ -3,6 +3,8 @@
 Providing reproducible simulations and analysis for the paper "How different homophily preferences mitigate and spur ethnic and value segregation: Schelling's model extended" (2018)
 Rocco Paolillo, Jan Lorenz
 
+This project has received funding from the European Union's Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 713639.
+
 ## Reproduce single simulation runs
 
 Use the NetLogo model (EthnicValueSegregation.nlogo). 
@@ -14,5 +16,3 @@ http://netlogoweb.org/web?https://raw.githubusercontent.com/RoccoPaolillo/Ethnic
 ## Reproduce the datasets
 
 Run the two already configured BehaviorSpace experiments in the NetLogo model (EthnicValueSegregation.nlogo). These will reproduce files as EthnicValueSegregation Extension-table.csv and EthnicValueSegregation Original_Schelling-table.csv. Results will differ only minimally because of random fluctuation. 
-
-This project has received funding from the European Union's Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 713639.
